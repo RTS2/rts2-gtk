@@ -1,0 +1,59 @@
+{"mw":500,"mh":400,"t":"vbox","c":[
+  {"t":"notebook","c":[
+    {"label":"System","c":
+      {"t":"hbox","c":[
+        {"t":"vtable","c":[
+          {"t":"text","text":"<b>Board</b>","a":"0:0"},
+          {"t":"text","text":"<b>Temperature</b>","a":"1:0"},
+          {"t":"text","text":"Backboard","a":"0:1"},
+	  {"t":"vlab","value":"R0.back.temperature","a":"1:1","format":"{0:<06.6}"},
+          {"t":"text","text":"Power A","a":"0:2"},
+	  {"t":"vlab","value":"R0.pwrA.temperature","a":"1:2","format":"{0:<06.6}"},
+          {"t":"text","text":"Power B","a":"0:3"},
+	  {"t":"vlab","value":"R0.pwrB.temperature","a":"1:3","format":"{0:<06.6}"},
+          {"t":"text","text":"CLIF","a":"0:4"},
+	  {"t":"vlab","value":"R0.clif.temperature","a":"1:4","format":"{0:<06.6}"},
+          {"t":"text","text":"AD 1","a":"0:5"},
+	  {"t":"vlab","value":"R0.AD_1.temperature","a":"1:5","format":"{0:<06.6}"},
+          {"t":"text","text":"DRIVER 1","a":"0:6"},
+	  {"t":"vlab","value":"R0.DRV_1.temperature","a":"1:6","format":"{0:<06.6}"},
+          {"t":"text","text":"BIAS 1","a":"0:7"},
+	  {"t":"vlab","value":"R0.BIAS_1.temperature","a":"1:7","format":"{0:<06.6}"},
+          {"t":"text","text":"BIAS 2","a":"0:8"},
+	  {"t":"vlab","value":"R0.BIAS_2.temperature","a":"1:8","format":"{0:<06.6}"},
+          {"t":"text","text":"AD 2","a":"0:9"},
+	  {"t":"vlab","value":"R0.AD_2.temperature","a":"1:9","format":"{0:<06.6}"},
+          {"t":"text","text":"DRIVER 2","a":"0:10"},
+	  {"t":"vlab","value":"R0.DRV_2.temperature","a":"1:10","format":"{0:<06.6}"}
+	]},
+        {"t":"vtable","c":[
+       	  {"t":"text","text":"<b>Supply</b>","a":"0:0"},
+      	  {"t":"text","text":"<b>Voltage (V)</b>","a":"1:0"},
+      	  {"t":"text","text":"<b>Current (A)</b>","a":"2:0"},
+      	  {"t":"text","text":"+5VD","a":"0:1"},
+      	  {"t":"text","text":"+5VA","a":"0:2"},
+      	  {"t":"text","text":"-5V","a":"0:3"},
+      	  {"t":"text","text":"+15V","a":"0:4"},
+      	  {"t":"text","text":"-15V","a":"0:5"},
+      	  {"t":"text","text":"+30V","a":"0:6"},
+          {"t":"vlab","value":"R0.pwrA.p5VD_V","a":"1:1","format":"{0:<06.6}"},
+          {"t":"vlab","value":"R0.pwrA.p5VD_A","a":"2:1"},
+          {"t":"vlab","value":"R0.pwrA.p5VA_V","a":"1:2"},
+          {"t":"vlab","value":"R0.pwrA.p5VA_A","a":"2:2"},
+          {"t":"vlab","value":"R0.pwrA.m5VA_V","a":"1:3"},
+          {"t":"vlab","value":"R0.pwrA.m5VA_A","a":"2:3"},
+          {"t":"vlab","value":"R0.pwrB.p15VA_V","a":"1:4"},
+          {"t":"vlab","value":"R0.pwrB.p15VA_A","a":"2:4"},
+          {"t":"vlab","value":"R0.pwrB.m15VA_V","a":"1:5"},
+          {"t":"vlab","value":"R0.pwrB.m15VA_A","a":"2:5"},
+          {"t":"vlab","value":"R0.pwrB.p30VA_V","a":"1:6"},
+          {"t":"vlab","value":"R0.pwrB.p30VA_A","a":"2:6"}
+	]}
+     ]}
+    },{"label":"Test","c":
+      {"t":"vtable","c":[
+        {"t":"text","text":"Test","a":"0:0"}
+     ]}
+  }]},
+  {"t":"form","name":"Test2","url":"forms/test2.json"}
+]}

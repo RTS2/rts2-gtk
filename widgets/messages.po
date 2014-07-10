@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-06-23 13:37-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: login.py:33
+msgid "Please login"
+msgstr ""
+
+#: login.py:63
+msgid "User name"
+msgstr ""
+
+#: login.py:64
+msgid "Password"
+msgstr ""
+
+#: speeds.py:25
+msgid "Speeds"
+msgstr ""
+
+#: targets.py:34
+msgid "Name"
+msgstr ""
+
+#: targets.py:34
+msgid "RA"
+msgstr ""
+
+#: targets.py:34
+msgid "DEC"
+msgstr ""
+
+#: targets.py:34
+msgid "Altitude"
+msgstr ""
+
+#: targets.py:34
+msgid "Azimuth"
+msgstr ""
+
+#: targets.py:34
+msgid "Enabled"
+msgstr ""
+
+#: telescope.py:17 telescope.py:34
+msgid "Telescope"
+msgstr ""
+
+#: telescope.py:31
+msgid "Originator"
+msgstr ""
+
+#: telescope.py:32
+msgid "Offsets"
+msgstr ""
+
+#: telescope.py:33
+msgid "Target"
+msgstr ""
+
+#: telescope.py:42
+msgid "Sidereal drive"
+msgstr ""
+
+#: telescope.py:45
+msgid "Park"
+msgstr ""
+
+#: telescope.py:48
+msgid "Reset"
+msgstr ""

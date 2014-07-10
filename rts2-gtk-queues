@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+#   Queues graphical user interface
+#
+#   (C) 2014 Petr Kubanek, Institute of Physics <kubanek@fzu.cz>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2, or (at your option)
+#   any later version.
+#
+#   Please visit http://www.gnu.org/licenses/gpl.html for license informations.
+
+from optparse import OptionParser
+
+import gettext
+import gtk
+import gobject
+
+import rts2
+from widgets.queues import Queues
+from widgets import login
+
+t = gettext.translation('rts2',fallback=True)
+_ = t.lgettext
+
+parser = OptionParser()
+parser.add_option('--dont-disable', help="don't allow users to disable queues", action='store_true', dest='dont_disable', default=False)
+parser.add_option('--url', help="RTS2 JSON API URL. Can include username and password in standard URL notation (<protocol>://[<user>[:<password>]@]<server>:<port>/<path>", action='store', dest='url', default=None)
+parser.add_option('--verbose', help="produce verbose messages (usefull for debugging)", action='store_true', dest='verbose', default=False)
+
+(options,args) = parser.parse_args()
+
+l = login.Login()
+
+if options.url is None:
+	l.signon(startQueue=True, verbose=options.verbose)
+else:
+	l.signon(url=options.url, startQueue=True, verbose=options.verbose)
+
+qf = Queues(login.getProxy(), dont_disable=options.dont_disable)
+	
+w = gtk.Window()
+w.add(qf)
+w.set_title(_('Queues'))
+w.connect('destroy',gtk.main_quit)
+	
+qf.start_push()
+	
+gobject.idle_add(qf.show_queues)
+
+w.show_all()
+
+gtk.main()

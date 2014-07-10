@@ -1,0 +1,24 @@
+{"mw":500,"mh":400,"t":"vbox","c":[
+  {"t":"notebook","c":[
+    {"label":"Main","c":
+      {"t":"vtable","c":[
+        {"t":"text","text":"<b>Good weather</b>","a":"0:0"},
+        {"t":"vlab","value":"SD.random_double","a":"1:0","format":"{0:<015.15}"},
+        {"t":"text","text":"Stop move","a":"0:1"},
+        {"t":"vlab","value":"SD.stop_move","a":"1:1"},
+        {"t":"text","text":"Timer","a":"0:2"},
+        {"t":"eval","value":"SD.timer_count","a":"1:2"},
+        {"t":"text","text":"Random","a":"0:3"},
+        {"t":"eval","value":"SD.random_double","a":"1:3"},
+        {"t":"text","text":"Critical","a":"0:4"},
+        {"t":"bool","value":"SD.generate_critical","a":"1:4"}
+     ]}
+   },{"label":"Test","c":
+      {"t":"vtable","c":[
+        {"t":"text","text":"Test","a":"0:0"},
+        {"t":"vlab","value":"SD.TEST_INT","a":"1:0"}
+     ]}
+   }]
+  },
+  {"t":"form","name":"Test2","url":"forms/test2.json"}
+]}

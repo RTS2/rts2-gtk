@@ -1,0 +1,115 @@
+#!/usr/bin/python
+
+import gettext
+import uiwindow
+import uitable
+import gtk
+import login
+import os
+
+t = gettext.translation('rts2',fallback=True)
+_ = t.lgettext
+
+l = login.Login()
+l.signon()
+
+master = uiwindow.UIFrame(login.getProxy())
+
+w = gtk.Window()
+w.set_title(_('FLWO 1.2m Weather'))
+w.add(master)
+
+t = uitable.UITable(1,1)
+
+masterstate = uitable.MasterState(master, t.create_path(1, 0, 0, 3), t.create_path(1, 1, 1, 2), t.create_path(2, 3, 0, 4))
+t.attach(masterstate, 1, 2, 0, 1, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+l=gtk.Label(_('<b>NOT observe</b>'))
+l.set_use_markup(True)
+l.set_line_wrap(True)
+t.attach(l, 0, 1, 3, 4, gtk.SHRINK, gtk.SHRINK)
+
+onoff = uitable.OnOff(master,'DOME', 'weather_open', t.create_path(2, 3, 2, 4), t.create_path(1, 1, 3, 4), tooltip=_('Press to change. If it says <b>on</b>, then system will reopen if bad weather turned into good.'))
+t.attach(onoff, 1, 2, 2, 3)
+t.attach(gtk.Label(_('Will not reopen')), 1, 2, 4, 5, xpadding=10)
+
+def label_right(text):
+	l = gtk.Label(text)
+	l.set_alignment(1, 0.5)
+	return l
+
+t.attach(uitable.LimitLabel(master, 'WEATHER', 'wind_speed', 'wind_speed_limit', _('wind speed\n{v:.1f} {s} {l}'), _('Set wind speed limit'), path_failed=t.create_path(4, 6, 4, 3)), 3, 4, 4, 5, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitLabel(master, 'WEATHER', 'wind_gust', 'wind_gust_limit', _('wind gust\n{v:.1f} {s} {l}'), _('Set wind gust speed limit'), path_failed=t.create_path(4, 6, 5, 3)), 3, 4, 5, 6, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitLabel(master, 'WEATHER', 'humidity', 'humidity_limit', _('humidity\n{v:.0f} {s} {l}'), _('Set humidity limit'), path_failed=t.create_path(4, 6, 6, 3)), 3, 4, 6, 7, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitLabel(master, 'WEATHER', 'me_sky_temp', 'me_sky_limit', _('sky temperature\n{v:.1f} {s} {l}'), _('Set sky temperature limit'), path_failed=t.create_path(4, 6, 7, 3)), 3, 4, 7, 8, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitTimeout(master, 'WEATHER', 'next_good_weather', _('Weather timeout\n{0}'), path_failed=t.create_path(4, 6, 8, 3)), 3, 4, 8, 9, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitLabel(master, 'DOME', 'night_closings', 'max_night_closings', _('night closings\n{v} {s} {l}'), _('Set maximal closing allowed during night'), path_failed=t.create_path(4, 6, 9, 3)), 3, 4, 9, 10, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitTimeout(master, 'DOME', 'next_open', _('Dome timeout\n{0}'), path_failed=t.create_path(4, 6, 10, 3)), 3, 4, 10, 11, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(gtk.Label(_('Bad weather')), 6, 7, 3, 4)
+
+t.attach(uitable.MasterNight(master, t.create_path(4, 6, 11, 12), t.create_path(3, 1, 11, 12)), 3, 4, 11, 12)
+
+# bad weather
+
+t.attach(gtk.Label(_('Will open')), 1, 2, 12, 13)
+t.attach(gtk.Label(_('Should be opened')), 6, 7, 12, 13)
+
+t.attach(uitable.TargetButton(master, 'SEL', 'current_target', _('Current target\n{0.name:10.10} (#{0.id})')), 0, 1, 5, 6)
+t.attach(uitable.TargetButton(master, 'SEL', 'next_id', _('Next target\n{0.name:10.10} (#{0.id})')), 0, 1, 6, 7)
+
+def run_help(b):
+	os.system('mozilla /help/FLWO/48/ROBOT/flwoweather.html')
+
+hp = gtk.Button(stock=gtk.STOCK_HELP)
+hp.connect('clicked', run_help)
+t.attach(hp, 0, 1, 11, 12)
+
+vb = gtk.VBox()
+hb = gtk.HBox()
+
+b = gtk.Button()
+
+class TeleImage(uiwindow.WWWImage):
+	def __init__(self, scale=None):
+		uiwindow.WWWImage.__init__(self, 'http://skycam.mmto.arizona.edu/skycam/latest_image.png', 6000, scale=scale)
+	
+	def set_rts2(self, varname, value):
+		self.set_alt_az(value[1]['alt'], value[1]['az'])
+
+telimage = TeleImage(scale=(320,240))
+
+b.add(telimage)
+
+def show_big(b):
+	w = gtk.Window()
+	w.set_title(_('Current image'))
+	t = TeleImage()
+	w.add(t)
+	master.addValue('TELE', 'TEL_', t)
+	w.show_all()
+
+b.connect('clicked',show_big)
+
+vb.pack_end(b)
+
+# dome webcam image
+vb.pack_start(uiwindow.WWWImage('http://192.33.141.16/axis-cgi/jpg/image.cgi', 6000, scale=(320,240)))
+
+hb.pack_end(t)
+hb.pack_start(vb)
+
+master.addValue('TELE', 'TEL_', telimage)
+
+master.add(hb)
+master.start_push()
+w.show_all()
+
+w.connect('destroy', gtk.main_quit)
+gtk.main()

@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+import gettext
+import widgets
+import widgets.login
+import widgets.uiwindow
+import widgets.uitable
+import widgets.rotator
+import gtk
+import os
+
+t = gettext.translation('rts2',fallback=True)
+_ = t.lgettext
+
+l = widgets.Login()
+l.signon()
+
+master = widgets.uiwindow.UIFrame(widgets.login.getProxy())
+
+w = gtk.Window()
+w.set_title(_('SAAO 1.0m telescope control'))
+w.add(master)
+
+t = widgets.uitable.UITable(1,1)
+
+tel = widgets.Telescope('T0')
+rot = widgets.rotator.Rotator()
+
+t.attach(tel,1,2,1,2)
+t.attach(rot,2,3,1,2)
+t.attach(widgets.Pointing(),3,4,1,2)
+
+master.add(t)
+master.start_push()
+
+w.show_all()
+
+w.connect('destroy', gtk.main_quit)
+gtk.main()

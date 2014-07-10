@@ -1,0 +1,109 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="guide"
+      id="flwoweather">
+  <info>
+    <revision version="0.2" date="2012-10-01" status="stub"/>
+
+    <credit type="author copyright">
+      <name>Petr Kubánek</name>
+      <email>petr@kubanek.net</email>
+      <years>2012</years>
+    </credit>
+
+    <desc>FLWO Weather is a primary status display for FLWO 1.2m </desc>
+  </info>
+
+  <title>FLWO weather display</title>
+
+  <comment>
+    <cite date="2012-09-21" href="mailto:petr@kubanek.net">Petr Kubánek</cite>
+    <p>This assumes the reader knows how the FLWO 1.2m robot mode work. Please see
+    <code href="http://www.sao.arizona.edu/FLWO/48/ROBOT/Primer.pdf">FLWO primer</code>
+    for details.</p>
+  </comment>
+
+  <p>The FLWO weather display allows 1.2m observers to quickly asset weather, identify if it is
+  acceptable for telescope operations and change weather limits if they ase too strict for current weather.
+  This window is only client to the robot system running the obseravtory.
+  If you would like the robot to operate the observatory, you <em>must</em> run
+  <code>GOrobot</code> command from <gui>telsh</gui> window.
+  </p>
+
+  <p><em>Please use common sense while changing limits</em>. If unsure, contact 1.5m
+  observer for detailed weather report. Also please make sure the telescope
+  closure will be check by somebody, particularly during incliment weather on
+  weekends. Mechanisms and software embedded into robot mode can fail. It is
+  advisible to check on dome web-cam, which is embedded into weather display,
+  that the dome is properly closed on morning. If you will see some light on dome
+  weather camera during day, dome is probably not closed.
+  </p>
+
+  <section id="webcam">
+
+  <subtitle>Webcam views</subtitle>
+
+  <p>On left side of the window you will see two webcams. Upper is dome
+  view, lower is MMT skycam. The images should be refreshed about every 10
+  seconds, so you should be able to track clouds on MMT skycam and see if the
+  dome is rotating when there is enough light. Clicking on the skycam will
+  display a standalone window with full size skycam image. You can turn on dome
+  lights using <code>lightdome</code> command.
+  </p>
+
+  </section>
+
+  <section id="states">
+
+  <subtitle>System state</subtitle>
+
+  <p>
+  The right side of the window shows system state. Clicking on butons with
+  mouse will trigger an action. Lines connecting system states display
+  algorithm inside the weather sub-system. Thick lines mark active path, while
+  thin lines show inactive path which can be triggered if the system state
+  changes.
+  </p>
+
+  <p>Topmost is on, standby or off <gui>state</gui>. If the state is <gui
+  style="button">off</gui>, clicking on the button will switch state either
+  to standby or on. This is a master switch for robot operations - robot will
+  NOT operate on its own if the state is <em>OFF</em>. If state is
+  <em>ON</em>, robot will open dome on evening (and close it on morning), and
+  will run observations through the night. If state is <em>STANDBY</em>, system
+  might decide on its own to switch to <em>ON</em> state.
+  </p>
+
+  <p>Down from master state is switch deciding whenever observatory will reopen on good weather.
+  If the switch is <em>on</em>, robot will issue commands to open if the bad
+  weather (causing <em>standby</em> mode) will go away.
+  </p>
+
+  <p>Right bottom contains lists of weather limits. If a value is out of the
+  limit, causing bad weather, it is colored red. Green colored values are
+  within weather limit. Clicking on limit value will display a dialog allowing
+  user to change the limit value. Values should be updated about every 60
+  seconds. The weather system has build-in timeouts, and if weather data aren't
+  received for 5 minutes, the system will turn into <em>bad weather</em> mode,
+  causing end of robot operations.</p>
+
+  <p>At bottom of the weather block are two timeout values. One is for the
+  weather subsystem, second is for a dome. Those elements shows timeouts
+  embedded into robot subsystem, which are designed to prevent start of the observations 
+  if the weather turns just marginally good. For example, see below.
+  </p>
+
+  <steps>
+    <title>Weather timeouts</title>
+    <item><p>All weather values are within limits, robot is running.</p></item>
+    <item><p>Too high wind speed, which violates windspeed limit, is detected by weather component.</p></item>
+    <item><p>System switch to <em>standby</em> mode, forcing robot to stop observations and shut down the dome slit.</p></item>
+    <item><p>Weather timeout is set to 10 minutes, a value default for wind speed timeout.</p></item>
+    <item><p>Again, values of wind speend violating limits are detected. Weather timeout is again set to 10 minutes.</p></item>
+    <item><p>Once weather timeout expires, system is in <em>standby</em> mode, and the reopen switch is <em>on</em>, robot will open the dome and start again observations.</p></item>
+  </steps>
+
+  <p>You can reset timeouts, e.g. set them to 0, by clicking on the timeout label.</p>
+
+  </section>
+
+</page>

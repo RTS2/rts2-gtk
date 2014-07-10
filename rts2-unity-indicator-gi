@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+
+import sys
+from gi.repository import Notify, Gtk, GLib
+from gi.repository import AppIndicator3 as AppIndicator
+import rts2.json
+from espeak import espeak
+#espeak.set_parameter(rate, 120, False)
+#espeak.Gender='f'
+
+alarm='/root/meteostation/aaa.mp3'
+server='http://192.168.1.60:8889'
+jsonProxy = rts2.json.JSONProxy(server, 'obs', 'rts2')
+
+PING_FREQUENCY = 10 # milliseconds
+
+class Check_rts2_aag:
+    def __init__(self):
+        self.ind = AppIndicator.Indicator.new('rts2-unity-indicator', '/home/selen/Desktop/meteo-icon.png', AppIndicator.IndicatorCategory.OTHER)
+        self.ind.set_status(AppIndicator.IndicatorStatus.ACTIVE)
+        self.ind.set_attention_icon("/home/selen/Desktop/meteo-icon_bad.png")
+
+        self.n = None
+
+        Notify.init("RTS2 weather monitor")
+
+        self.menu_setup()
+        self.ind.set_menu(self.menu)
+
+    def callback_function(self, notification=None, action=None, data=None):
+        print "It worked"
+        espeak.cancel()
+        notification.close()
+        #return Gtk.ResponseType.CANCEL
+        return True
+        
+    def menu_setup(self):
+        self.menu = Gtk.Menu()
+
+        self.quit_item = Gtk.MenuItem("Quit")
+        self.quit_item.connect("activate", self.quit)
+        self.quit_item.show()
+        self.menu.append(self.quit_item)
+
+    def main(self):
+        self.check_rts2meteo()
+        GLib.timeout_add(PING_FREQUENCY * 100, self.check_rts2meteo)
+        GLib.MainLoop().run()
+
+    def quit(self, widget):
+        sys.exit(0)
+
+    def check_rts2meteo(self):
+        self.ind.set_status(AppIndicator.IndicatorStatus.ATTENTION)
+        jsonProxy.refresh()
+        wind_err=jsonProxy.getValueError("AAG", 'WIND_SPEED')
+        jsonProxy.refresh()
+        #print wind_err
+        if wind_err:
+            self.ind.set_status(AppIndicator.IndicatorStatus.ATTENTION)
+            espeak.synth('Meteo Alarm: Wind Speed too high!')
+            if self.n is None:
+                self.n = Notify.Notification.new("METEO ALERT", "Wind Speed to high!","dialog-warning")
+                self.n.set_urgency(Notify.Urgency.CRITICAL)
+                self.n.set_timeout(Notify.EXPIRES_NEVER)
+                self.n.add_action("reset_alarm","Reset Alarm", self.callback_function, None, None)
+                self.n.show()
+                print "After show"
+        else:
+            self.ind.set_status(appindicator.STATUS_ACTIVE)
+        return True
+
+if __name__ == "__main__":
+    indicator = Check_rts2_aag()
+    indicator.main()

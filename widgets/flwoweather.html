@@ -1,0 +1,136 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>FLWO weather display</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page">
+<div class="header"></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">FLWO weather display</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">The FLWO weather GUI may be started with command
+GOview in any xterm on flwo48. It displays weather 
+conditions and allows observers to quickly
+  assess the weather, decide that it is acceptable for telescope
+  operations and change weather limits if they are too strict for
+  the current weather.  This window is a client to RTS2-F. 
+  If you would like the robot to operate the
+  telescope, you <span class=" em">must</span> run the
+  <span class=" code">GOrobot</span> command from 
+the <span class=" gui">Telshell</span> window.
+  </p>
+<img align=center src="flwoweather.jpg" width=650></td>
+
+<p class="p"><span class=" em">Please be very careful when changing
+limits</span>. If unsure, contact the 1.5m observer for a detailed
+weather report. Also please make sure the telescope closure will be
+checked by somebody, particularly during inclement weather and on
+weekends. Mechanisms and software embedded in RTS2-F can fail. It is
+advisable to check the 48 webcam, embedded in the weather
+display, to verify that the dome is properly closed in the morning. 
+If you 
+see light in the webcam during the day, the dome is probably not
+closed.
+  </p>
+</div>
+<div id="webcam" class="sect"><div class="inner">
+<div class="hgroup"><h3 class="subtitle">Webcam views</h3></div>
+<div class="region"><div class="contents"><p class="p">
+On the left side of the window there two webcam views. The top one shows
+  the chamber, the bottom one shows the 
+MMT skycam. The images should refresh about
+  every 10 seconds, so you should be able to track clouds on the MMT
+  skycam and see if the dome is rotating when there is enough
+  light. Clicking on the skycam will display a standalone window with
+  a full size skycam image. You can turn on (off) a dome light
+  with the <span class=" code">lightdome (darkdome)</span> command.
+  </p></div></div>
+</div></div>
+<div id="states" class="sect"><div class="inner">
+<div class="hgroup"><h3 class="subtitle">System state</h3></div>
+<div class="region"><div class="contents">
+<p class="p">
+  The right side of the window shows the system state. Clicking on buttons
+  with your mouse will trigger an action. Lines connecting system states
+  display the state inside the weather sub-system. Thick lines mark
+  active paths, whereas thin lines show inactive paths which can be
+  triggered if the system state changes.
+  </p>
+<p class="p">Topmost shows ON, STANDBY or OFF <span class="
+  gui">state</span>. If the state is <span class=" gui">OFF</span>,
+  clicking on the button will switch the state either to STANDBY or
+  ON. This is a master switch for RTS2-F operations - RTS2-F will NOT
+  operate on its own if the state is <span class=" em">OFF</span>. If
+  the state is
+  <span class=" em">ON</span>, RTS2-F will open the dome in the
+  evening (and close it in the morning), and will run observations
+  through the night. If the state is <span class=" em">STANDBY</span>,
+  RTS2-F decides on its own to switch to the <span class="
+  em">ON</span> state, as the weather permits.
+  </p>
+<p class="p">Below the master state is a switch to decide when
+  the telescope will reopen on good weather.  If the switch
+  is <span class=" em">ON</span>, RTS2-F will issue commands to open if
+  the bad weather (causing <span class=" em">STANDBY</span> mode) 
+  dissipates.
+  </p>
+<p class="p">The block on the right contains 
+boxes with weather limits. If a value
+  is outside the limit, meaning bad weather, it is red. Green
+  values are within weather limits. Clicking on a limit value
+  displays a dialog allowing the user to change the limit
+  value. RTS2-F updates the display about every 60 seconds. The weather
+  system has builtin timeouts, so if weather data aren not received
+  for 5 minutes, the system turns into <span class=" em">bad
+  weather</span> mode, triggeriing a shutdown.</p>
+<p class="p">At the bottom of the block are two timeout
+  values. One is for the weather subsystem, the second is for the 
+  dome. Those elements shows timeouts embedded in the RTS2-F ubsystem,
+  which are designed to prevent a start of observations if the
+  weather turns just marginally good. For an example, see below.
+  </p>
+<div class="steps"><div class="inner">
+<div class="title title-steps"><h3><span class="title">Weather
+timeouts</span></h3></div>
+<div class="region"><ol class="steps">
+<li class="steps"><p class="p">All weather values are within limits,
+RTS2-F is running.</p></li>
+<li class="steps"><p class="p">Excessive wind speed, which violates
+winds peed limit, is detected by weather sub-system.</p></li>
+<li class="steps"><p class="p">System switch to <span class="
+em">STANDBY</span> mode, forcing RTS2-F to stop observations and shut
+the dome slit.</p></li>
+<li class="steps"><p class="p">Weather timeout is set to 10 minutes, a
+default value for wind speed timeout.</p></li>
+<li class="steps"><p class="p">Again, values of wind speed violating
+limits are detected. Weather timeout is again set to 10
+minutes.</p></li>
+<li class="steps"><p class="p">Once weather timeout expires, system is
+in <span class=" em">STANDBY</span> mode, and the reopen switch
+is <span class=" em">on</span>, RTS2-F will open the dome and start
+again observations.</p></li>
+</ol></div>
+</div></div>
+<p class="p">You can reset timeouts, e.g. set them to 0, by clicking
+on the timeout label.</p>
+</div></div>
+</div></div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2012 Petr Kubánek</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Petr Kubánek</li></ul>
+</div>
+</div></div>
+</div></div>
+</div></body>
+</html>
