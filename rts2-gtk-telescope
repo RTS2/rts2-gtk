@@ -18,7 +18,7 @@ l.signon()
 master = widgets.uiwindow.UIFrame(widgets.login.getProxy())
 
 w = gtk.Window()
-w.set_title(_('SAAO 1.0m telescope control'))
+w.set_title(_('Telescope control'))
 w.add(master)
 
 t = widgets.uitable.UITable(1,1)
