@@ -6,6 +6,8 @@ import uitable
 import gtk
 import login
 import os
+import time
+import sys
 
 t = gettext.translation('rts2',fallback=True)
 _ = t.lgettext
@@ -18,8 +20,22 @@ master = uiwindow.UIFrame(login.getProxy())
 w = gtk.Window()
 w.set_title(_('FLWO 1.2m Weather'))
 w.add(master)
+w.set_default_size(200, 200)
+w.set_resizable (False)
+
 
 t = uitable.UITable(1,1)
+
+old_size = None
+
+def changed(window):
+	global old_size
+	if not(old_size == window.get_size()):
+		print 'resized',time.asctime(),window.get_size()
+		file.flush(sys.stdout)
+		old_size = window.get_size()
+
+w.connect('check-resize', changed)
 
 masterstate = uitable.MasterState(master, t.create_path(1, 0, 0, 3), t.create_path(1, 1, 1, 2), t.create_path(2, 3, 0, 4))
 t.attach(masterstate, 1, 2, 0, 1, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
@@ -44,22 +60,24 @@ t.attach(uitable.LimitLabel(master, 'WEATHER', 'wind_gust', 'wind_gust_limit', _
 
 t.attach(uitable.LimitLabel(master, 'WEATHER', 'humidity', 'humidity_limit', _('humidity\n{v:.0f} {s} {l}'), _('Set humidity limit'), path_failed=t.create_path(4, 6, 6, 3)), 3, 4, 6, 7, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
 
-t.attach(uitable.LimitLabel(master, 'WEATHER', 'me_sky_temp', 'me_sky_limit', _('sky temperature\n{v:.1f} {s} {l}'), _('Set sky temperature limit'), path_failed=t.create_path(4, 6, 7, 3)), 3, 4, 7, 8, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+t.attach(uitable.LimitLabel(master, 'ME', 'me_sky_temp', 'me_sky_limit', _('sky temperature\n{v:.1f} {s} {l}'), _('Set sky temperature limit'), path_failed=t.create_path(4, 6, 7, 3)), 3, 4, 7, 8, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
 
 t.attach(uitable.LimitTimeout(master, 'WEATHER', 'next_good_weather', _('Weather timeout\n{0}'), path_failed=t.create_path(4, 6, 8, 3)), 3, 4, 8, 9, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
 
-t.attach(uitable.LimitLabel(master, 'DOME', 'night_closings', 'max_night_closings', _('night closings\n{v} {s} {l}'), _('Set maximal closing allowed during night'), path_failed=t.create_path(4, 6, 9, 3)), 3, 4, 9, 10, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+t.attach(uitable.LimitTimeout(master, 'ME', 'next_good_weather', _('Sky timeout\n{0}'), path_failed=t.create_path(4, 6, 9, 3)), 3, 4, 9, 10, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
 
-t.attach(uitable.LimitTimeout(master, 'DOME', 'next_open', _('Dome timeout\n{0}'), path_failed=t.create_path(4, 6, 10, 3)), 3, 4, 10, 11, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+t.attach(uitable.LimitLabel(master, 'DOME', 'night_closings', 'max_night_closings', _('night closings\n{v} {s} {l}'), _('Set maximal closing allowed during night'), path_failed=t.create_path(4, 6, 10, 3)), 3, 4, 10, 11, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
+
+t.attach(uitable.LimitTimeout(master, 'DOME', 'next_open', _('Dome timeout\n{0}'), path_failed=t.create_path(4, 6, 11, 3)), 3, 4, 11, 12, gtk.SHRINK | gtk.FILL, gtk.SHRINK | gtk.FILL)
 
 t.attach(gtk.Label(_('Bad weather')), 6, 7, 3, 4)
 
-t.attach(uitable.MasterNight(master, t.create_path(4, 6, 11, 12), t.create_path(3, 1, 11, 12)), 3, 4, 11, 12)
+t.attach(uitable.MasterNight(master, t.create_path(4, 6, 12, 13), t.create_path(3, 1, 12, 13)), 3, 4, 12, 13)
 
 # bad weather
 
-t.attach(gtk.Label(_('Will open')), 1, 2, 12, 13)
-t.attach(gtk.Label(_('Should be opened')), 6, 7, 12, 13)
+t.attach(gtk.Label(_('Will open')), 1, 2, 13, 14)
+t.attach(gtk.Label(_('Should be opened')), 6, 7, 13, 14)
 
 t.attach(uitable.TargetButton(master, 'SEL', 'current_target', _('Current target\n{0.name:10.10} (#{0.id})')), 0, 1, 5, 6)
 t.attach(uitable.TargetButton(master, 'SEL', 'next_id', _('Next target\n{0.name:10.10} (#{0.id})')), 0, 1, 6, 7)

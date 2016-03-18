@@ -36,7 +36,7 @@ _ = t.lgettext
 def nighttime(t):
 	if t is None:
 		return '----'
-	return time.strftime('%x %X %Z',time.localtime(t))
+	return time.strftime('%X %Z',time.localtime(t))
 
 class TimeDialog(gtk.Dialog):
 	"""Window to select time.
@@ -381,6 +381,7 @@ class QueueTable(gtk.Table, uiwindow.Value):
 
 		self.testconstr = True
 		self.dont_ask_for_overrun = False
+		self.remembered_skip_anyway = 0
 	
 	def __changed_qid(self, value):
 		# only delete qids which disappered
@@ -532,17 +533,29 @@ class QueueTable(gtk.Table, uiwindow.Value):
 				# find first possible time..
 				satisfied = self.master.jsonProxy.loadJson('/api/satisfied',{'id':id,'from':int(s),'to':int(e)})['satisfied']
 				if len(satisfied) == 0:
-					try:
-						gtk.gdk.threads_enter()
-						msgbox = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, parent=self.get_toplevel(), flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, message_format=_('Target {0} cannot be observed from {1} to {2}.'.format(name,nighttime(s),nighttime(e))))
-						msgbox.add_button(_('Add anyway'),1)
-						msgbox.add_button(_('Skip it'),2)
-						ret = msgbox.run()
-						msgbox.destroy()
-						if ret == 2:
-							return
-					finally:
-						gtk.gdk.threads_leave()
+					if self.remembered_skip_anyway == 2:
+						return
+					if self.remembered_skip_anyway == 0:
+						try:
+							gtk.gdk.threads_enter()
+							msgbox = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, parent=self.get_toplevel(), flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, message_format=_('Target {0} cannot be observed from {1} to {2}.'.format(name,nighttime(s),nighttime(e))))
+							msgbox.add_button(_('Add anyway'),1)
+							msgbox.add_button(_('Skip it'),2)
+							dont_ask = gtk.CheckButton(_("Don't ask again"))
+							msgbox.get_action_area().pack_end(dont_ask, False, False)
+							msgbox.add_button(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL)
+							msgbox.show_all()
+							ret = msgbox.run()
+							msgbox.destroy()
+							if ret == gtk.RESPONSE_CANCEL:
+								self.master.jsonProxy.progress_dialog.response(gtk.RESPONSE_REJECT)
+								return
+							if dont_ask.get_active():
+								self.remembered_skip_anyway = ret
+							if ret == 2:
+								return
+						finally:
+							gtk.gdk.threads_leave()
 
 				elif satisfied[0][0] > s:
 					try:
