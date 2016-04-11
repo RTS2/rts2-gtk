@@ -36,7 +36,7 @@ _ = t.lgettext
 def nighttime(t):
 	if t is None:
 		return '----'
-	return time.strftime('%X %Z',time.localtime(t))
+	return time.strftime('%H:%M:%S %Z',time.localtime(t))
 
 class TimeDialog(gtk.Dialog):
 	"""Window to select time.
