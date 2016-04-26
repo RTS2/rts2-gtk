@@ -254,7 +254,7 @@ class Login:
 	def message(self,message):
 		self.pb.set_text(message)
 
-	def signon(self, url='localhost:8889', login='observer', password='#$kepcam', startQueue=False, verbose=False):
+	def signon(self, url='localhost:8889', login=None, password=None, startQueue=False, verbose=False):
 		"""Sign on to RTS2 JSON server. url - JSON API URL (can include username and login)"""
 		# try to get username (and password) from url
 		purl = urlparse.urlsplit(url)
