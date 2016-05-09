@@ -399,9 +399,12 @@ class Table(gtk.Table):
 		last_x = 0
 		last_y = 0
 		for x in je:
-			(last_x, last_y) = x['a'].split(':')
-			last_x = int(last_x)
-			last_y = int(last_y)
+			try:
+				(last_x, last_y) = x['a'].split(':')
+				last_x = int(last_x)
+				last_y = int(last_y)
+			except KeyError,ke:
+				last_x += 1
 			self.attach(_getValueBox(master, x['t'], x), last_x, last_x+1, last_y, last_y+1, gtk.SHRINK | gtk.FILL, gtk.SHRINK)
 	
 class Notebook(gtk.Notebook):
