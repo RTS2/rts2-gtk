@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# File for testing of the configuration routines.
-# Copyright (C) 2011 Petr Kubanek, Institute of Physics <kubanek@fzu.cz>
+# Draw windows from JSON form.
+# Copyright (C) 2011-2016 Petr Kubanek, Institute of Physics <kubanek@fzu.cz>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -46,7 +45,7 @@ class Value:
 class Entry(gtk.Entry, Value):
 	def __init__(self,master,device,varname):
 		gtk.Entry.__init__(self)
-		Value.__init__(self, master, device, varname)
+		Value.__init__(self, master)
 		self.connect('key-press-event', self.key_press)
 
 		self.master.addValue(device, varname, self)
@@ -314,7 +313,7 @@ class Command(gtk.Button):
 	def clicked(self,b):
 		self.jsonProxy.executeCommand(self.device,self.command)
 
-def _getValueBox(t,je):
+def _getValueBox(master,t,je):
 	"""Return value box for given value type."""
 	f = None
 
@@ -330,41 +329,41 @@ def _getValueBox(t,je):
 	frmt = je['format'] if je.has_key('format') else None
 
 	if t == 'eval':
-		f = Entry(device, value)
+		f = Entry(master,device, value)
 	elif t == 'bool':
-		f = ToggleButton(device, value)
+		f = ToggleButton(master,device, value)
 	elif t == 'vlab':
-		f = Label(device, value, frmt=frmt)
+		f = Label(master,device, value, frmt=frmt)
 	elif t == 'filesel':
-		f = FileSelection(device, value)
+		f = FileSelection(master,device, value)
 	try:
 		f.set_tooltip_markup('<b>{0}.{1}</b>:{2}'.format(device, value, json.JSONProxy().getVariable(device, value)[4]))
 	except Exception,ex:
 		f.set_tooltip_markup('<b>missing value</b>: {0}'.format(str(ex)))
 
-	return addValue(device, value, f)
+	return master.addValue(device, value, f)
 
-def _createForm(parent, je):
+def _createForm(parent, master, je):
 	"""Create form from json element, add it to parent."""
 	for x in je:
-		_createElement(parent, x)
+		_createElement(parent, master, x)
 
-def _createElement(parent, je):
+def _createElement(parent, master, je):
 	t = je['t']
 	f = None
 	if t == 'vbox':
 		f = gtk.VBox()
-		_createForm(f, je['c'])
+		_createForm(f, master, je['c'])
 		parent.add(f)
 	elif t == 'hbox':
 		f = gtk.HBox()
-		_createForm(f, je['c'])
+		_createForm(f, master, je['c'])
 		parent.add(f)
 	elif t == 'vtable':
-		f = Table(je['c'])
+		f = Table(master, je['c'])
 		parent.add(f)
 	elif t == 'notebook':
-		f = Notebook(je['c'])
+		f = Notebook(master, je['c'])
 		parent.add(f)
 	elif t == 'form':
 		f = gtk.Button(label=je['name'])
@@ -379,7 +378,7 @@ def _createElement(parent, je):
 		f.connect('clicked',self.selectTarget,je)
 		parent.add(f)
 	else:
-		f = _getValueBox(t,je)
+		f = _getValueBox(master,t,je)
 		if f is None:
 			print >>sys.stderr, 'unknow type {0}'.format(t)
 		else:
@@ -393,7 +392,7 @@ def _createWindow(b, je):
 
 class Table(gtk.Table):
 	"""Create table instance."""
-	def __init__(self, je):
+	def __init__(self, master, je):
 		gtk.Table.__init__(self)
 		self.set_row_spacings(3)
 		self.set_col_spacings(3)
@@ -403,14 +402,14 @@ class Table(gtk.Table):
 			(last_x, last_y) = x['a'].split(':')
 			last_x = int(last_x)
 			last_y = int(last_y)
-			self.attach(_getValueBox(x['t'], x), last_x, last_x+1, last_y, last_y+1, gtk.SHRINK | gtk.FILL, gtk.SHRINK)
+			self.attach(_getValueBox(master, x['t'], x), last_x, last_x+1, last_y, last_y+1, gtk.SHRINK | gtk.FILL, gtk.SHRINK)
 	
 class Notebook(gtk.Notebook):
-	def __init__(self, je):
+	def __init__(self, master, je):
 		gtk.Notebook.__init__(self)
 		for x in je:
 		  	f = gtk.Frame()
-			_createElement(f, x['c'])
+			_createElement(f, master, x['c'])
 			self.append_page(f, tab_label=gtk.Label(x['label']))
 
 class UIFrame(gtk.Frame):
@@ -485,8 +484,9 @@ class UIFrame(gtk.Frame):
 
 	def loadJson(self,parent):
 		form = self.jsonProxy.loadJson(self.url,{})
-		self.set_geometry_hints(min_width=form['mw'],min_height=form['mh'])
-		self.main = _createElement(parent, form)
+		self.min_width=form['mw']
+		self.min_height=form['mh']
+		self.main = _createElement(parent, self, form)
 
 	def selectTarget(self,b,je):
 		"""Enable users to select target."""
@@ -498,15 +498,3 @@ class UIFrame(gtk.Frame):
 			d.hide()
 
 		threading.Thread(target=__select,args=(self,)).start()
-
-if __name__ == '__main__':
-	gobject.threads_init()
-	l = login.Login()
-	l.signon()
-
-	frame = UIFrame('/forms/main.json')
-
-	w = gtk.Window()
-	w.add(frame)
-	w.connect('destroy',gtk.main_quit)
-	gtk.main()
