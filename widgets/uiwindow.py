@@ -27,7 +27,7 @@ import radec
 import threading
 import traceback
 import Queue
-import rts2.json
+import rts2.rtsapi
 import urllib
 
 t = gettext.translation('rts2',fallback=True)

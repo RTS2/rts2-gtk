@@ -25,7 +25,7 @@ import login
 import targets
 import string
 import sys
-import rts2.json
+import rts2.rtsapi
 
 t = gettext.translation('rts2',fallback=True)
 _ = t.lgettext

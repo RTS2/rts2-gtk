@@ -20,7 +20,7 @@ t = gettext.translation('rts2',fallback=True)
 _ = t.lgettext
 
 # for JSON
-import rts2.json
+import rts2.rtsapi
 import sys
 import signal
 import re
@@ -67,9 +67,9 @@ class ProgressDialog(gtk.Dialog):
 
 			gobject.idle_add(__cancel, self)
 
-class JSONProxy(rts2.json.JSONProxy):
+class JSONProxy(rts2.rtsapi.JSONProxy):
 	def __init__(self, url, login, password, verbose=False):
-		rts2.json.JSONProxy.__init__(self, url=url, username=login, password=password, verbose=verbose)
+		rts2.rtsapi.JSONProxy.__init__(self, url=url, username=login, password=password, verbose=verbose)
 
 		self.__queue = Queue.Queue()
 		self.description = None
@@ -134,7 +134,7 @@ class JSONProxy(rts2.json.JSONProxy):
 def createJsonServer(host, login, password, verbose=False):
 	global __jsonProxy
 	__jsonProxy = JSONProxy(host, login, password, verbose=verbose)
-	rts2.json.set_proxy(__jsonProxy)
+	rts2.rtsapi.set_proxy(__jsonProxy)
 
 class Login:
 	"""Login window. Creates login window, ask user for credetials. If login is

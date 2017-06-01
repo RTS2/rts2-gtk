@@ -4,13 +4,13 @@ import sys
 from gi.repository import Notify, Gtk, GLib
 from gi.repository import AppIndicator3 as AppIndicator
 import rts2.json
-from espeak import espeak
+#from espeak import espeak
 #espeak.set_parameter(rate, 120, False)
 #espeak.Gender='f'
 
 alarm='/root/meteostation/aaa.mp3'
-server='http://192.168.1.60:8889'
-jsonProxy = rts2.json.JSONProxy(server, 'obs', 'rts2')
+server='http://lsstccd:8889'
+jsonProxy = rts2.json.JSONProxy(server, 'petr', 'test')
 
 PING_FREQUENCY = 10 # milliseconds
 
@@ -53,21 +53,20 @@ class Check_rts2_aag:
     def check_rts2meteo(self):
         self.ind.set_status(AppIndicator.IndicatorStatus.ATTENTION)
         jsonProxy.refresh()
-        wind_err=jsonProxy.getValueError("AAG", 'WIND_SPEED')
+        #wind_err=jsonProxy.getValueError("AAG", 'WIND_SPEED')
         jsonProxy.refresh()
-        #print wind_err
-        if wind_err:
-            self.ind.set_status(AppIndicator.IndicatorStatus.ATTENTION)
-            espeak.synth('Meteo Alarm: Wind Speed too high!')
-            if self.n is None:
-                self.n = Notify.Notification.new("METEO ALERT", "Wind Speed to high!","dialog-warning")
-                self.n.set_urgency(Notify.Urgency.CRITICAL)
-                self.n.set_timeout(Notify.EXPIRES_NEVER)
-                self.n.add_action("reset_alarm","Reset Alarm", self.callback_function, None, None)
-                self.n.show()
-                print "After show"
-        else:
-            self.ind.set_status(appindicator.STATUS_ACTIVE)
+        #if wind_err:
+        #    self.ind.set_status(AppIndicator.IndicatorStatus.ATTENTION)
+        #    #espeak.synth('Meteo Alarm: Wind Speed too high!')
+        #    if self.n is None:
+        #        self.n = Notify.Notification.new("METEO ALERT", "Wind Speed to high!","dialog-warning")
+        #        self.n.set_urgency(Notify.Urgency.CRITICAL)
+        #        self.n.set_timeout(Notify.EXPIRES_NEVER)
+        #        self.n.add_action("reset_alarm","Reset Alarm", self.callback_function, None, None)
+        #        self.n.show()
+        #        print "After show"
+        #else:
+        #    self.ind.set_status(appindicator.STATUS_ACTIVE)
         return True
 
 if __name__ == "__main__":
