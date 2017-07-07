@@ -19,7 +19,7 @@ import fuzzytime
 import xml.dom.minidom
 import importcatalog
 import threading
-import rts2.json
+import rts2.rtsapi
 import rts2.queue
 import uiwindow
 
@@ -733,7 +733,7 @@ class QueueBox(gtk.HBox, uiwindow.Value):
 
 		# assign read-only flag
 		try:
-			self.readonly = not(master.jsonProxy.getVariable('SEL',self.qname + '_queing')[0] & rts2.json.RTS2_VALUE_WRITABLE)
+			self.readonly = not(master.jsonProxy.getVariable('SEL',self.qname + '_queing')[0] & rts2.rtsapi.RTS2_VALUE_WRITABLE)
 			self.q = QueueTable(master,qname,self.readonly)
 		except Exception,ex:
 			msgbox = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, message_format=_('Cannot create queue: {0}'.format(str(ex))))

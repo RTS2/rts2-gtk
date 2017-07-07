@@ -13,7 +13,7 @@ import targets
 import time
 import nights
 import rts2
-import rts2.json
+import rts2.rtsapi
 import uiwindow
 import xml.dom.minidom
 
@@ -53,7 +53,7 @@ class Queue(uiwindow.Value):
 		self.cl = gtk.Label()
 		self.table.attach(self.cl, 1, 2, row, row+1, gtk.FILL, gtk.FILL, xpadding=10)
 
-		readonly = not(self.master.jsonProxy.getVariable('SEL',self.qname + '_queing')[0] & rts2.json.RTS2_VALUE_WRITABLE)
+		readonly = not(self.master.jsonProxy.getVariable('SEL',self.qname + '_queing')[0] & rts2.rtsapi.RTS2_VALUE_WRITABLE)
 
 		qe = None
 		if readonly:

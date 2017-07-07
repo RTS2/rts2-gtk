@@ -4,7 +4,7 @@ import sys
 import gtk
 import appindicator
 
-import rts2.json
+import rts2.rtsapi
 
 PING_FREQUENCY = 10 # seconds
 

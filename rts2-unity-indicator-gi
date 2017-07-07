@@ -3,14 +3,14 @@
 import sys
 from gi.repository import Notify, Gtk, GLib
 from gi.repository import AppIndicator3 as AppIndicator
-import rts2.json
+import rts2.rtsapi
 #from espeak import espeak
 #espeak.set_parameter(rate, 120, False)
 #espeak.Gender='f'
 
 alarm='/root/meteostation/aaa.mp3'
 server='http://lsstccd:8889'
-jsonProxy = rts2.json.JSONProxy(server, 'petr', 'test')
+jsonProxy = rts2.rtsapi.JSONProxy(server, 'petr', 'test')
 
 PING_FREQUENCY = 10 # milliseconds
 

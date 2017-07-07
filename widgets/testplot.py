@@ -13,7 +13,7 @@ import os
 import signal
 import threading
 import math
-import rts2.json
+import rts2.rtsapi
 
 from optparse import OptionParser
 
@@ -31,7 +31,7 @@ if len(args) == 0:
 	print >>sys.stderr, 'You must specify at least one variable to monitor'
 	sys.exit(1)
 
-j = rts2.json.JSONProxy(options.server, options.user, options.password, verbose = options.verbose)
+j = rts2.rtsapi.JSONProxy(options.server, options.user, options.password, verbose = options.verbose)
 
 gobject.threads_init()
 

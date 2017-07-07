@@ -151,7 +151,7 @@ class Operation:
 		m = gtk.ListStore(str)
 		d = login.getProxy().getDevice(self.device.get_active_text())
 		for n in d.keys():
-			if (d[n][0] & rts2.json.RTS2_VALUE_WRITABLE) and n != 'filter':
+			if (d[n][0] & rts2.rtsapi.RTS2_VALUE_WRITABLE) and n != 'filter':
 				m.append([n])
 		self.name.set_model(m)
 		self.name.set_active(0)
@@ -160,22 +160,22 @@ class Operation:
 		d = self.device.get_active_text()
 		n = self.name.get_active_text()
 		self.vf = login.getProxy().getVariable(d,n)[0]
-		self.vb = rts2.json.RTS2_VALUE_BASETYPE & self.vf
+		self.vb = rts2.rtsapi.RTS2_VALUE_BASETYPE & self.vf
 		if self.operands:
 			self.opbox.remove(self.operands)
 
-		if self.vb == rts2.json.RTS2_VALUE_SELECTION:
+		if self.vb == rts2.rtsapi.RTS2_VALUE_SELECTION:
 			self.operands = login.getProxy().getSelectionComboEntry(d,n)
 			self.operands.set_active(login.getProxy().getValue(d,n))
-		elif self.vb == rts2.json.RTS2_VALUE_INTEGER or self.vb == rts2.json.RTS2_VALUE_LONGINT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_INTEGER or self.vb == rts2.rtsapi.RTS2_VALUE_LONGINT:
 			self.operands = gtk.SpinButton(gtk.Adjustment(0,-sys.maxint - 1,sys.maxint,1,10))
 			self.operands.set_width_chars(6)
 			self.operands.set_value(int(login.getProxy().getValue(d,n)))
-		elif self.vb == rts2.json.RTS2_VALUE_DOUBLE or self.vb == rts2.json.RTS2_VALUE_FLOAT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_DOUBLE or self.vb == rts2.rtsapi.RTS2_VALUE_FLOAT:
 			self.operands = gtk.SpinButton(gtk.Adjustment(0,-sys.maxint - 1,sys.maxint,1,10),digits=3)
 			self.operands.set_width_chars(6)
 			self.operands.set_value(float(login.getProxy().getValue(d,n)))
-		elif self.vb == rts2.json.RTS2_VALUE_BOOL:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_BOOL:
 			self.operands = gtk.HBox()
 			self.rb_true = gtk.RadioButton(None,'On')
 			self.rb_false = gtk.RadioButton(self.rb_true,'Off')
@@ -190,7 +190,7 @@ class Operation:
 			self.operands.set_width_chars(6)
 			self.operands.set_text(str(login.getProxy().getValue(d,n)))
 
-		if self.vb == rts2.json.RTS2_VALUE_STRING:
+		if self.vb == rts2.rtsapi.RTS2_VALUE_STRING:
 			if self.op:
 				self.opbox.remove(self.op)
 				self.opbox.pack_start(gtk.Label('='),False,False)
@@ -208,13 +208,13 @@ class Operation:
 			
 	def get_script(self):
 		operands = None
-		if self.vb == rts2.json.RTS2_VALUE_SELECTION:
+		if self.vb == rts2.rtsapi.RTS2_VALUE_SELECTION:
 			operands = self.operands.child.get_text()
-		elif self.vb == rts2.json.RTS2_VALUE_INTEGER or self.vb == rts2.json.RTS2_VALUE_LONGINT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_INTEGER or self.vb == rts2.rtsapi.RTS2_VALUE_LONGINT:
 			operands = int(self.operands.get_value())
-		elif self.vb == rts2.json.RTS2_VALUE_DOUBLE or self.vb == rts2.json.RTS2_VALUE_FLOAT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_DOUBLE or self.vb == rts2.rtsapi.RTS2_VALUE_FLOAT:
 			operands = self.operands.get_value()
-		elif self.vb == rts2.json.RTS2_VALUE_BOOL:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_BOOL:
 			if self.rb_true.get_active():
 				operands = '1'
 			else:
@@ -223,7 +223,7 @@ class Operation:
 			operands = self.operands.get_text()
 
 		op = '='
-		if not(self.vb == rts2.json.RTS2_VALUE_STRING):
+		if not(self.vb == rts2.rtsapi.RTS2_VALUE_STRING):
 			op = ['+=','=','-='][self.op.get_active()]
 
 		if self.device.get_active_text() == self.camera:
@@ -235,7 +235,7 @@ class Operation:
 		self.name.set_active(find_combo_string(self.name,je['name']))
 		self.name_changed(self.name)
 
-		if self.vb == rts2.json.RTS2_VALUE_SELECTION:
+		if self.vb == rts2.rtsapi.RTS2_VALUE_SELECTION:
 			try:
 				self.operands.set_active(int(je['operands']))
 			except ValueError,er:
@@ -243,11 +243,11 @@ class Operation:
 					self.operands.set_active(find_combo_string(self.operands,je['operands']))
 				except KeyError,ke:
 					self.operands.child.set_text(je['operands'])
-		elif self.vb == rts2.json.RTS2_VALUE_INTEGER or self.vb == rts2.json.RTS2_VALUE_LONGINT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_INTEGER or self.vb == rts2.rtsapi.RTS2_VALUE_LONGINT:
 			self.operands.set_value(int(je['operands']))
-		elif self.vb == rts2.json.RTS2_VALUE_DOUBLE or self.vb == rts2.json.RTS2_VALUE_FLOAT:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_DOUBLE or self.vb == rts2.rtsapi.RTS2_VALUE_FLOAT:
 			self.operands.set_value(float(je['operands']))
-		elif self.vb == rts2.json.RTS2_VALUE_BOOL:
+		elif self.vb == rts2.rtsapi.RTS2_VALUE_BOOL:
 			if je['operands'] in ['1','true','on','ON']:
 				self.rb_true.set_active(True)
 			else:
@@ -255,7 +255,7 @@ class Operation:
 		else:
 			self.operands.set_text(je['operands'])
 
-		if not (self.vb == rts2.json.RTS2_VALUE_STRING):
+		if not (self.vb == rts2.rtsapi.RTS2_VALUE_STRING):
 			if je['cmd'] == '-':
 				self.op.set_active(0)
 			elif je['cmd'] == '=':
